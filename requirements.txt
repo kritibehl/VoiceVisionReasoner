@@ -1,0 +1,10 @@
+torch
+torchaudio
+torchvision
+transformers
+accelerate
+sentencepiece
+streamlit
+pillow
+numpy
+pandas
