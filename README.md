@@ -1,4 +1,4 @@
-# 🎙️🖼️ VoiceVisionReasoner: Speech-Driven Visual Reasoning with Safety Checks
+#  VoiceVisionReasoner: Speech-Driven Visual Reasoning with Safety Checks
 
 **Kriti Behl — Voice → Vision → Answer**
 
@@ -19,7 +19,7 @@ and complements my **FairEval** framework for human-aligned LLM evaluation.
 
 ---
 
-## 🧩 High-Level Architecture
+## High-Level Architecture
 
 ```text
 [User Speech]  ──▶  ASR (Whisper) ──▶ transcript
