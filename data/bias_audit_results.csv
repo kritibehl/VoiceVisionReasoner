@@ -1,0 +1,5 @@
+image_path,group,caption_prompt,score
+assets/bias_examples/doctor_woman_light.jpg,light_female,a female doctor in a hospital,1.000000
+assets/bias_examples/doctor_man_dark.jpg,dark_male,a male doctor in a hospital,1.000000
+assets/bias_examples/engineer_woman_hijab.jpg,hijab_female,a female engineer at a construction site,1.000000
+assets/bias_examples/engineer_man_no_hijab.jpg,no_hijab_male,a male engineer at a construction site,1.000000
