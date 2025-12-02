@@ -1,214 +1,192 @@
-VoiceVisionReasoner
-A Multimodal Assistant for Context-Aware, Human-Safe Reasoning
+# VoiceVisionReasoner
 
-VoiceVisionReasoner is an experimental system that combines speech, visual context, and reasoning, with lightweight safety checks and intent-preserving repair.
-It explores a question central to modern assistants:
+## Multimodal Reasoning and Intent-Preserving Safety for Voice and Vision
 
-How can an AI understand what a user says, what they see, and respond constructively without punishing them for emotional or imperfect input?
+VoiceVisionReasoner is a research prototype that processes speech + visual context together. It produces grounded responses, avoids punitive refusals, and respects user intent.
 
-This project builds on two earlier systems:
+This project explores multimodal failures of current assistants and proposes a simple approach:
+- Whisper ASR (speech → text)
+- Vision captioning (image → description)
+- Joint reasoning (text + vision → answer)
+- Intent-preserving safety checks
 
-FairEval-Suite — human-centered evaluation of language model responses
+---
 
-JailBreakDefense — intent-preserving prompt reformulation for safe guidance
+## 1. Motivation
 
-VoiceVisionReasoner extends these ideas into the multimodal space (audio + images), where human vulnerability and ambiguity are most often expressed.
+Most AI assistants treat modalities as independent:
 
-Motivation
+- Speech → transcription → answer
+- Image → caption → answer
 
-Current AI assistants treat modalities separately:
+This siloed pipeline often produces:
+- generic replies
+- moralizing responses
+- refusals framed as safety
+- advice that ignores emotional context
+- hallucinations unrelated to user environment
 
-Speech → transcription → answer
+Most failures are not user attacks. They arise because the system fails to interpret human signals.
 
-Image → caption → answer
+VoiceVisionReasoner attempts to reduce these failures by combining:
+- Speech transcription
+- Visual description
+- Joint reasoning
+- Safety and tone checks
 
-These siloed processes often produce:
+---
 
-generic replies
+## 2. System Overview
 
-moralizing responses
+### 2.1 Processing Pipeline
+Audio (wav) → Whisper ASR → Transcript
+Image (jpg/png) → Caption Model → Caption
+Transcript + Caption → LLM → Reasoned Answer
+↓
+Tone / Safety Analysis
 
-refusals framed as safety
+### 2.2 Components
 
-advice that ignores emotional context
+#### Speech (ASR)
+Whisper generates transcription from spoken audio.
 
-hallucinations unrelated to the user’s environment
+#### Vision (Captioning)
+A captioning model describes the visible environment.
 
-Most failures are not adversarial.
-They arise from the system’s inability to interpret human signals.
+#### Reasoning
+A language model produces answers grounded in transcript + caption.
 
-VoiceVisionReasoner attempts to reduce this by combining:
+#### Safety
+Lightweight checks detect:
+- toxic tone
+- hallucinations
+- punitive refusals
+- moralizing language
 
-Speech transcription
+The system repairs intent only when needed.
 
-Visual description
+---
 
-Joint reasoning
+## 3. Core Idea
 
-Sanity and tone checks
+Typical LLMs treat:
+- emotion as danger
+- uncertainty as hallucination
+- user vulnerability as policy violation
 
-Intent-preserving framing
+VoiceVisionReasoner takes a different stance:
 
-The goal is not censorship.
-The goal is collaborative problem solving under ambiguity.
+Safety = collaboration, not punishment.
+Use context → propose constructive actions → preserve user intent.
 
-System Overview
+---
 
-Pipeline:
+## 4. Quick Start
 
-Audio (wav) → Whisper ASR
-Image (jpg/png) → Caption Model
-ASR Transcript + Image Caption → LLM Reasoning
-LLM Output → Safety and Consistency Checks
-
-
-Component roles:
-
-Whisper transcribes speech into text.
-
-Image Captioning Model summarizes the visual context.
-
-A language model synthesizes an answer grounded in both modalities.
-
-Safety checks detect tone issues, toxicity, or empty/lecturing responses.
-
-This design makes the system:
-
-explicit about its assumptions
-
-transparent in intermediate stages
-
-extendable to new modalities
-
-easier to evaluate and debug
-
-Quickstart
-
-Clone and install:
+### 4.1 Installation
 
 git clone https://github.com/kritibehl/VoiceVisionReasoner.git
+
 cd VoiceVisionReasoner
 pip install -r requirements.txt
 
 
-Run an example:
+### 4.2 Example Run
 
-python app.py \
-  --audio_path examples/query.wav \
-  --image_path examples/desk.png
+python app.py --audio_path examples/query.wav --image_path examples/desk.png
 
 
-The system will output:
+The program outputs:
+- speech transcript
+- image caption
+- joint reasoning answer
+- safety/tone indicators
 
-speech transcript
+---
 
-image caption
+## 5. Example Interaction
 
-joint reasoning answer
+User (spoken):
+“Why does my workspace make me feel stressed?”
 
-safety and tone flags
+Image:
+A cluttered desk with cables, notebooks, and unopened mail.
 
-Example Interaction
+System output:
+Clutter increases decision fatigue.
+Keep items you use daily within reach.
+Move infrequent objects into a drawer or box.
+Take a 5-minute break afterward.
 
-User asks a spoken question while pointing a camera at a cluttered desk:
+The answer is grounded, actionable, and non-judgmental.
 
-Prompt (spoken):
+---
 
-"Why does my workspace make me so stressed?"
+## 6. Relationship to Prior Work
 
-System response:
+### FairEval-Suite
+Human-aligned evaluation for LLM responses.
+Assesses clarity, relevance, tone, hallucination risk.
+https://github.com/kritibehl/FairEval-Suite
 
-recognizes the disorder in the image
+### JailBreakDefense
+Intent-preserving prompt repair.
+Converts adversarial or distressed prompts into constructive goals.
+https://github.com/kritibehl/JailBreakDefense
 
-identifies emotional state from phrasing
+### VoiceVisionReasoner
+Extends these principles to multimodal contexts.
 
-suggests realistic actions rather than abstract positivity
+---
 
-avoids judgement or lecturing
+## 7. Design Principles
 
-Example output:
+1. Transparency  
+Show intermediate steps.
 
-“Objects clustered on your desk increase visual load and decision fatigue.
-To reduce stress, try creating two piles: items needed within reach and items to archive later.
-Take a short break afterward to reset.”
+2. User Respect  
+Avoid moralizing or punitive refusal.
 
-This is not productivity coaching.
-It is context-based assistance that respects emotional expression.
+3. Visual Grounding  
+Anchor reasoning in observed context.
 
-Relation to My Alignment Tools
+4. Actionable Assistance  
+Offer specific steps, not disclaimers.
 
-This project is part of a larger effort to examine how humans experience AI responses rather than how models perform on benchmarks.
+---
 
-FairEval-Suite
+## 8. Limitations
 
-Rubric-driven evaluation based on clarity, relevance, helpfulness, and tone.
-Designed to reflect actual user perception rather than academic metrics.
-Repository: https://github.com/kritibehl/FairEval-Suite
+- Latency not optimized
+- Captioning errors can propagate
+- Safety layer minimal
+- No personalization or memory
+- Not clinical or crisis tooling
+- Prototype, not production
 
-JailBreakDefense
+---
 
-Intent-preserving prompt reformulation.
-Transforms hostile, distressed, or unsafe queries into constructive alternatives without erasing user goals.
-Repository: https://github.com/kritibehl/JailBreakDefense
+## 9. Future Work
 
-VoiceVisionReasoner
+- Real-time multimodal reasoning
+- Accessibility for low-vision users
+- Emotion-aware speech analysis
+- Caption confidence scoring
+- Integration with FairEval metrics
 
-Extends these principles to multimodal input, where emotion and environmental context converge.
-Focuses on conversational guidance rather than rule enforcement.
+---
 
-Together, these systems explore safety as collaboration with the user, not as refusal.
+## 10. License
 
-Architecture Notes
+MIT License. Research contributions are welcome.
 
-Modular components (ASR, captioning, LLM)
+---
 
-Each stage exposes intermediate outputs
+## 11. Author
 
-No heavy fine-tuning or proprietary datasets
+Kriti Behl  
+GitHub: https://github.com/kritibehl  
+Medium: https://medium.com/@kriti0608  
+Zenodo: (FairEval DOI linked in main repository)
 
-Designed to be modified and extended
 
-Minimal infrastructure dependencies
-
-Straightforward path to Siri-, AR-, or accessibility-style applications
-
-Limitations
-
-Latency is not optimized
-
-Captions may be inaccurate or incomplete
-
-Hallucinations may still occur
-
-Safety checks are deliberately simple
-
-No personal memory or history
-
-Not tested on edge accessibility cases
-
-This is not a production assistant.
-Its purpose is research and reflection on better multimodal safety practices.
-
-Research Direction
-
-VoiceVisionReasoner investigates:
-
-How emotional intent appears across speech and imagery
-
-How multimodal cues can guide safer reformulations
-
-How to avoid generic refusal and policy lectures
-
-How to produce actionable, respectful responses under uncertainty
-
-How to design assistive systems that minimize the emotional harm of misunderstanding
-
-The long-term direction is moving from “AI that enforces constraints”
-to “AI that supports users under pressure.”
-
-Contributing
-
-This is an exploratory project.
-Feedback, issues, and research discussions are welcome.
-
-— Kriti Behl
